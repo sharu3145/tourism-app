@@ -141,8 +141,16 @@ export default function Home() {
       {/* Route Map Button */}
       {selectedPlaces.length > 0 && (
         <div className="mt-8 text-center">
-          <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 flex items-center justify-center mx-auto gap-2">
-            Generate Route Map
+          <button onClick={() => {
+        const queryPlaces = selectedPlaces
+          .map((place) => `${place}, ${district}`)
+          .join("/");
+        const url = `https://www.google.com/maps/dir/${queryPlaces}`;
+        window.open(url, "_blank"); // opens in new tab
+      }}
+      className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 flex items-center justify-center mx-auto gap-2"
+    >
+      Generate Route Map
           </button>
         </div>
       )}
