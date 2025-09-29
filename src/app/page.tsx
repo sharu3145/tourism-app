@@ -3,19 +3,21 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [state, setState] = useState("");
-  const [district, setDistrict] = useState("");
+  const [state, setState] = useState<string>("");
+  const [district, setDistrict] = useState<string>("");
   const [places, setPlaces] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<string[]>([]);
 
-  // Dummy data for demonstration
+  // States & Districts
   const states = ["Karnataka", "Kerala", "Tamil Nadu"];
-  const districts = {
+  const districts: { [key: string]: string[] } = {
     Karnataka: ["Bangalore", "Mysore"],
     Kerala: ["Kochi", "Munnar"],
     "Tamil Nadu": ["Chennai", "Madurai"],
   };
-  const tourismPlaces = {
+
+  // Tourism Places (dynamic index to fix TS error)
+  const tourismPlaces: { [key: string]: string[] } = {
     Bangalore: ["Lalbagh", "Cubbon Park", "Bangalore Palace"],
     Mysore: ["Mysore Palace", "Brindavan Gardens"],
     Kochi: ["Fort Kochi", "Marine Drive"],
@@ -23,17 +25,30 @@ export default function Home() {
     Chennai: ["Marina Beach", "Kapaleeshwarar Temple"],
     Madurai: ["Meenakshi Temple", "Thirumalai Nayakar Mahal"],
   };
-  const hotels = {
+
+  // Hotels (dynamic index)
+  const hotels: { [key: string]: string[] } = {
     Lalbagh: ["Hotel Green Park", "Garden Residency"],
     "Cubbon Park": ["Park View Inn", "Central Lodge"],
     "Mysore Palace": ["Palace Stay", "Royal Heritage Hotel"],
+    "Fort Kochi": ["Sea View Hotel", "Marine Residency"],
+    "Tea Gardens": ["Hilltop Resort", "Munnar Stay"],
+    "Marina Beach": ["Beachside Inn", "Chennai Residency"],
+    "Meenakshi Temple": ["Temple View Hotel", "Madurai Inn"],
   };
 
+  // Show places for selected district
   const handleShowPlaces = () => {
-    setPlaces(tourismPlaces[district] || []);
-    setSelectedPlaces([]);
-  };
+  if (district && tourismPlaces[district]) {
+    setPlaces(tourismPlaces[district]);
+  } else {
+    setPlaces([]);
+  }
+  setSelectedPlaces([]);
+};
 
+
+  // Select / deselect places
   const togglePlace = (place: string) => {
     setSelectedPlaces((prev) =>
       prev.includes(place) ? prev.filter((p) => p !== place) : [...prev, place]
@@ -107,7 +122,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-2">{place}</h2>
             <p className="text-sm text-gray-600 mb-2">Nearby Hotels:</p>
             <ul className="list-disc list-inside text-sm">
-              {(hotels[place] || ["Hotel A", "Hotel B"]).map((h) => (
+              {(district && hotels[place] ? hotels[place] : ["Hotel A", "Hotel B"]).map((h) => (
                 <li key={h}>
                   <a
                     href={`https://www.google.com/search?q=${h}+${district}`}
